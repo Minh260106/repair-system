@@ -99,11 +99,11 @@ export default function Header() {
 
         <div className="flex items-center gap-4">
           <a
-            href={`tel:${selectedBranch ? selectedBranch.hotline.replace(/\s/g, '') : '18002056'}`}
+            href={`tel:${selectedBranch && selectedBranch.hotline ? selectedBranch.hotline.replace(/\s/g, '') : '18002056'}`}
             className="flex items-center gap-1.5 font-bold text-accent hover:text-accent-hover transition"
           >
             <Phone className="w-3.5 h-3.5" />
-            <span>Hotline miễn cước: {selectedBranch ? selectedBranch.hotline : '1800 2056'}</span>
+            <span>Hotline miễn cước: {selectedBranch && selectedBranch.hotline ? selectedBranch.hotline : '1800 2056'}</span>
           </a>
         </div>
       </div>
@@ -271,11 +271,11 @@ export default function Header() {
                 <span>Giờ mở cửa: {selectedBranch ? selectedBranch.workingHours.split(' ')[0] : '8:00'} - {selectedBranch ? selectedBranch.workingHours.split(' ')[2] : '21:00'}</span>
               </div>
               <a
-                href={`tel:${selectedBranch ? selectedBranch.hotline.replace(/\s/g, '') : '18002056'}`}
+                href={`tel:${selectedBranch && selectedBranch.hotline ? selectedBranch.hotline.replace(/\s/g, '') : '18002056'}`}
                 className="flex items-center gap-2 text-accent font-bold mt-2 hover:underline"
               >
                 <Phone className="w-4 h-4 shrink-0" />
-                <span>Gọi ngay: {selectedBranch ? selectedBranch.hotline : '1800 2056'}</span>
+                <span>Gọi ngay: {selectedBranch && selectedBranch.hotline ? selectedBranch.hotline : '1800 2056'}</span>
               </a>
             </div>
           </div>

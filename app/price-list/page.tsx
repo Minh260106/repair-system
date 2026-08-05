@@ -242,7 +242,7 @@ function PriceListContent() {
                         </td>
                         <td className="p-4 pr-6 text-right">
                           <Link
-                            href={`/booking?device=${encodeURIComponent(s.deviceModel)}&type=${s.category}`}
+                            href={`/booking?device=${encodeURIComponent(s.deviceModel || s.name)}&type=${s.category}`}
                             className="inline-flex items-center gap-1 px-4 py-2 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition shadow-md shadow-primary/10 active:scale-95"
                           >
                             <CalendarDays className="w-3.5 h-3.5" />

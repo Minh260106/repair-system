@@ -1,20 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "../components/layout/header";
-import Footer from "../components/layout/footer";
-import MobileBottomBar from "../components/layout/mobile-bottom-bar";
-import AiChatbot from "../features/chatbot/ai-chatbot";
 
-const plusJakarta = Plus_Jakarta_Sans({
+const inter = Inter({
   variable: "--font-sans",
   subsets: ["vietnamese", "latin"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "FixCare - Hệ Thống Sửa Chữa Thiết Bị Điện Tử Uy Tín",
-  description: "Dịch vụ sửa chữa điện thoại, laptop, iPad chuyên nghiệp, thay màn hình, thay pin lấy ngay với sự hỗ trợ định giá từ AI thông minh.",
+  title: "AutoFixAI - Hệ Thống Garage Sửa Chữa & Bảo Dưỡng Thông Minh",
+  description: "Dịch vụ sửa chữa xe máy, ô tô chuyên nghiệp, thay nhớt, vệ sinh kim phun, bảo dưỡng toàn diện với AI chẩn đoán bệnh tức thì.",
 };
 
 export const viewport: Viewport = {
@@ -31,19 +27,10 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${plusJakarta.variable} h-full antialiased font-sans`}
+      className={`${inter.variable} h-full antialiased font-sans scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        <Header />
-        
-        {/* Main layout container with offset padding-bottom for the mobile bottom bar */}
-        <main className="flex-1 pb-16 lg:pb-0">
-          {children}
-        </main>
-        
-        <Footer />
-        <MobileBottomBar />
-        <AiChatbot />
+      <body className="min-h-full flex flex-col bg-slate-50 text-gray-900">
+        {children}
       </body>
     </html>
   );
