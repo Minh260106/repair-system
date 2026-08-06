@@ -3,9 +3,11 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search, SlidersHorizontal, Smartphone, Laptop, Tablet, Watch, ShieldCheck, Clock, CalendarDays, AlertCircle } from 'lucide-react';
+import { Search, SlidersHorizontal, Wrench, Zap, ShieldCheck, Clock, CalendarDays, AlertCircle } from 'lucide-react';
 import ApiClient from '../../lib/api/client';
 import { ServiceItem } from '../../types';
+import { Input } from '../../components/ui/input';
+import { Select } from '../../components/ui/select';
 
 function PriceListContent() {
   const router = useRouter();
@@ -57,7 +59,6 @@ function PriceListContent() {
 
   const handleCategoryChange = (cat: string) => {
     setSelectedCategory(cat);
-    // Reset brand when category changes to avoid empty combinations
     setSelectedBrand('all');
     updateParams(cat, 'all', searchQuery);
   };
@@ -79,13 +80,7 @@ function PriceListContent() {
 
   // Get brands based on category
   const getBrandOptions = () => {
-    if (selectedCategory === 'laptop') {
-      return ['Apple', 'Dell', 'HP', 'Asus'];
-    }
-    if (selectedCategory === 'phone') {
-      return ['Apple', 'Samsung', 'Oppo', 'Xiaomi'];
-    }
-    return ['Apple', 'Samsung', 'Dell', 'HP', 'Asus'];
+    return ['Honda', 'Yamaha', 'Piaggio', 'Suzuki', 'SYM', 'VinFast', 'Toyota', 'Hyundai', 'Ford'];
   };
 
   return (
@@ -94,10 +89,10 @@ function PriceListContent() {
       {/* Page Header */}
       <div className="border-b border-slate-200 dark:border-slate-800 pb-6 mb-8">
         <h1 className="text-2xl md:text-4xl font-black tracking-tight text-foreground">
-          Bảng Giá Sửa Chữa Thiết Bị Điện Tử
+          Bảng Giá Bảo Dưỡng & Sửa Chữa Xe Máy, Ô Tô
         </h1>
         <p className="text-muted text-xs md:text-sm mt-2">
-          Báo giá minh bạch, trọn gói linh kiện + tiền công thợ, cam kết không phát sinh chi phí phụ.
+          Báo giá minh bạch, trọn gói phụ tùng + tiền công thợ, cam kết không phát sinh chi phí phụ.
         </p>
       </div>
 
@@ -112,30 +107,25 @@ function PriceListContent() {
           </div>
 
           {/* Search box inside filter panel */}
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold text-muted uppercase tracking-wider block">Từ khóa thiết bị</label>
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Nhập tên máy (ví dụ: iPhone 13)..."
-                className="w-full pl-9 pr-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 rounded-xl text-xs outline-none focus:border-primary focus:bg-white dark:focus:bg-slate-900 transition text-foreground"
-              />
-              <Search className="w-4 h-4 text-muted absolute left-3 top-2.5" />
-            </div>
-          </div>
+          <Input
+            label="Từ khóa xe / dịch vụ"
+            type="text"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Nhập tên xe hoặc dịch vụ (ví dụ: SH 150i, Thay nhớt...)..."
+            leftIcon={<Search className="w-4 h-4" />}
+          />
 
           {/* Categories select list */}
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-muted uppercase tracking-wider block">Loại Thiết Bị</label>
+            <label className="text-[11px] font-bold text-muted uppercase tracking-wider block">Hạng Mục Sửa Chữa</label>
             <div className="flex flex-col gap-1.5">
               {[
-                { id: 'all', label: 'Tất cả thiết bị', icon: null },
-                { id: 'phone', label: 'Điện thoại', icon: Smartphone },
-                { id: 'laptop', label: 'MacBook & Laptop', icon: Laptop },
-                { id: 'tablet', label: 'iPad & Máy tính bảng', icon: Tablet },
-                { id: 'watch', label: 'Smartwatch', icon: Watch },
+                { id: 'all', label: 'Tất cả dịch vụ', icon: Wrench },
+                { id: 'maintenance', label: 'Bảo dưỡng định kỳ', icon: Wrench },
+                { id: 'repair', label: 'Vệ sinh nồi & Kim phun FI', icon: Wrench },
+                { id: 'brakes', label: 'Hệ thống phanh & Bố thắng', icon: Wrench },
+                { id: 'electrical', label: 'Điện, Ắc quy & Bugi', icon: Zap },
               ].map((opt) => {
                 const Icon = opt.icon;
                 const isSelected = selectedCategory === opt.id;
@@ -158,19 +148,13 @@ function PriceListContent() {
           </div>
 
           {/* Brand select dropdown */}
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold text-muted uppercase tracking-wider block">Hãng Sản Xuất</label>
-            <select
-              value={selectedBrand}
-              onChange={(e) => handleBrandChange(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 rounded-xl text-xs outline-none focus:border-primary focus:bg-white dark:focus:bg-slate-900 text-foreground transition"
-            >
-              <option value="all">Tất cả hãng sản xuất</option>
-              {getBrandOptions().map((b) => (
-                <option key={b} value={b.toLowerCase()}>{b}</option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label="Hãng Sản Xuất"
+            value={selectedBrand}
+            onChange={(e) => handleBrandChange(e.target.value)}
+            placeholder="Tất cả hãng sản xuất"
+            options={getBrandOptions().map((b) => ({ value: b.toLowerCase(), label: b }))}
+          />
         </div>
 
         {/* Right Content Table Prices */}

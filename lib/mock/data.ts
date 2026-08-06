@@ -1,4 +1,5 @@
-import { Branch, ServiceItem, OrderItem, Customer, Vehicle, Mechanic, Appointment, Invoice } from '../../types';
+import { Branch, ServiceItem, OrderItem, Customer, Vehicle, Mechanic, Appointment, Invoice, AuthUser, PartItem, Review, NotificationItem } from '../../types';
+
 
 export const mockBranches: Branch[] = [
   {
@@ -124,8 +125,8 @@ export const mockCustomers: Customer[] = [
     phone: '0988 123 456',
     email: 'tuan.nguyen@gmail.com',
     address: '147 Lý Thường Kiệt, Q.11, TP.HCM',
-    totalSpent: 1850000,
-    totalOrders: 3,
+    totalSpent: 3050000,
+    totalOrders: 4,
     joinedDate: '15/01/2026'
   },
   {
@@ -134,8 +135,8 @@ export const mockCustomers: Customer[] = [
     phone: '0912 345 678',
     email: 'huong.le@yahoo.com',
     address: '88 Nguyễn Trãi, Q.5, TP.HCM',
-    totalSpent: 2450000,
-    totalOrders: 4,
+    totalSpent: 2800000,
+    totalOrders: 5,
     joinedDate: '02/02/2026'
   },
   {
@@ -225,6 +226,7 @@ export const mockOrders: OrderItem[] = [
     status: 'inspecting',
     assignedMechanicId: 'mech-1',
     assignedMechanicName: 'Nguyễn Văn Nam',
+    assignmentStatus: 'pending_acceptance',
     services: [
       { serviceId: 'srv-1', serviceName: 'Thay Nhớt & Bảo Dưỡng Động Cơ', price: 150000 },
       { serviceId: 'srv-2', serviceName: 'Vệ Sinh Nồi & Kim Phun Xăng Điện Tử FI', price: 250000 }
@@ -364,3 +366,159 @@ export const mockInvoices: Invoice[] = [
     createdAt: '05/08/2026 08:35'
   }
 ];
+
+export const mockUsers: AuthUser[] = [
+  {
+    id: 'usr-admin',
+    name: 'Đỗ Hoàng Admin',
+    email: 'admin@autofixai.com',
+    role: 'admin',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    phone: '0909 000 111'
+  },
+  {
+    id: 'usr-manager',
+    name: 'Trần Văn Quản Lý',
+    email: 'manager@autofixai.com',
+    role: 'manager',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    phone: '0909 222 333'
+  },
+  {
+    id: 'usr-tech',
+    name: 'Nguyễn Văn Nam (Kỹ Thuật)',
+    email: 'tech@autofixai.com',
+    role: 'technician',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    phone: '0901 234 567'
+  },
+  {
+    id: 'cust-1',
+    name: 'Nguyễn Minh Tuấn',
+    email: 'khach@gmail.com',
+    role: 'customer',
+    avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80',
+    phone: '0988 123 456',
+    address: '147 Lý Thường Kiệt, Q.11, TP.HCM'
+  }
+];
+
+export const mockParts: PartItem[] = [
+  {
+    id: 'prt-1',
+    name: 'Bugi NGK Iridium CPR8EAG-9',
+    sku: 'BG-NGK-IRD-01',
+    quantity: 24,
+    minQuantity: 10,
+    unitPrice: 220000,
+    supplier: 'NGK Việt Nam',
+    lastRestockDate: '01/08/2026'
+  },
+  {
+    id: 'prt-2',
+    name: 'Nhớt Động Cơ Motul 300V FL Road 10W40 (1L)',
+    sku: 'OIL-MTL-300V-1L',
+    quantity: 15,
+    minQuantity: 8,
+    unitPrice: 450000,
+    supplier: 'Motul Global',
+    lastRestockDate: '28/07/2026'
+  },
+  {
+    id: 'prt-3',
+    name: 'Bố Phanh Nissin Trước SH 150i/125i',
+    sku: 'BP-NIS-SH-FR',
+    quantity: 3,
+    minQuantity: 5,
+    unitPrice: 180000,
+    supplier: 'Phụ tùng Honda Chính Hãng',
+    lastRestockDate: '15/07/2026'
+  },
+  {
+    id: 'prt-4',
+    name: 'Bình Ắc Quy GS GTZ6V (12V-5Ah)',
+    sku: 'AQ-GS-GTZ6V',
+    quantity: 2,
+    minQuantity: 6,
+    unitPrice: 380000,
+    supplier: 'Ắc quy GS Việt Nam',
+    lastRestockDate: '10/07/2026'
+  },
+  {
+    id: 'prt-5',
+    name: 'Dây Curoa Bando Vespa Sprint 125',
+    sku: 'DC-BD-VESPA-125',
+    quantity: 12,
+    minQuantity: 4,
+    unitPrice: 320000,
+    supplier: 'Bando Belts Co.',
+    lastRestockDate: '02/08/2026'
+  }
+];
+
+export const mockReviews: Review[] = [
+  {
+    id: 'rev-1',
+    orderId: 'ORD-8890',
+    customerId: 'cust-1',
+    customerName: 'Nguyễn Minh Tuấn',
+    rating: 5,
+    comment: 'Dịch vụ chẩn đoán AI rất chuẩn xác! Xe mình bảo dưỡng xong chạy cực êm, thợ tư vấn nhiệt tình.',
+    isPublic: true,
+    createdAt: '04/08/2026 18:00'
+  },
+  {
+    id: 'rev-2',
+    orderId: 'ORD-8891',
+    customerId: 'cust-4',
+    customerName: 'Phạm Hoàng Yến',
+    rating: 5,
+    comment: 'Cứu hộ thay ắc quy lưu động siêu nhanh. Chưa đầy 20 phút thợ đã tới tận nơi kích bình!',
+    isPublic: true,
+    createdAt: '05/08/2026 09:30'
+  }
+];
+
+export const mockNotifications: NotificationItem[] = [
+  {
+    id: 'notif-1',
+    userId: 'cust-1',
+    title: 'Xe của bạn đang kiểm tra',
+    message: 'Kỹ thuật viên Nguyễn Văn Nam bắt đầu tháo lắp & chẩn đoán xe SH 150i (#ORD-8892).',
+    type: 'info',
+    isRead: false,
+    createdAt: '05/08/2026 08:45',
+    link: '/portal/orders/ord-1'
+  },
+  {
+    id: 'notif-2',
+    userId: 'cust-1',
+    title: 'Hóa đơn sẵn sàng thanh toán',
+    message: 'Hóa đơn #INV-2026-001 trị giá 495.000đ đã hoàn tất. Bạn có thể quét mã QR thanh toán ngay.',
+    type: 'success',
+    isRead: false,
+    createdAt: '04/08/2026 16:50',
+    link: '/portal/invoices'
+  },
+  {
+    id: 'notif-3',
+    userId: 'usr-admin',
+    title: 'Lịch hẹn mới #APT-301',
+    message: 'Khách hàng Vũ Quốc Khánh đã đặt lịch bảo dưỡng xe Honda Winner X lúc 09:00.',
+    type: 'warning',
+    isRead: false,
+    createdAt: '05/08/2026 10:15',
+    link: '/admin/appointments'
+  },
+  {
+    id: 'notif-4',
+    userId: 'usr-admin',
+    title: 'Cảnh báo phụ tùng sắp hết',
+    message: 'Bố Phanh Nissin Trước SH (SKU: BP-NIS-SH-FR) chỉ còn 3 cái trong kho.',
+    type: 'error',
+    isRead: false,
+    createdAt: '05/08/2026 07:00',
+    link: '/admin/inventory'
+  }
+];
+

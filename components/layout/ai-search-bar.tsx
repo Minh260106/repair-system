@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Sparkles, X, ChevronRight, Laptop, Smartphone, ShieldCheck, Clock } from 'lucide-react';
+import { Search, Sparkles, X, ChevronRight, Wrench, ShieldCheck, Clock } from 'lucide-react';
 import ApiClient from '../../lib/api/client';
 import { ServiceItem } from '../../types';
 
@@ -97,8 +97,8 @@ export default function AiSearchBar() {
   return (
     <div ref={containerRef} className="relative w-full max-w-md" onKeyDown={handleKeyDown}>
       {/* Search Input Box */}
-      <div className="relative flex items-center w-full bg-slate-100 dark:bg-slate-800 rounded-full border border-transparent focus-within:border-primary/50 focus-within:bg-white dark:focus-within:bg-slate-900 transition-all duration-300 shadow-sm focus-within:shadow-md">
-        <div className="pl-4 text-muted dark:text-muted flex items-center">
+      <div className="relative flex items-center w-full bg-muted-light rounded-full border border-border focus-within:border-primary focus-within:bg-background transition-all duration-300 shadow-sm focus-within:shadow-md">
+        <div className="pl-4 text-muted flex items-center">
           <Search className="w-4 h-4" />
         </div>
         <input
@@ -111,8 +111,8 @@ export default function AiSearchBar() {
             setSelectedIndex(-1);
           }}
           onFocus={() => setIsOpen(true)}
-          placeholder="Tìm sửa điện thoại, laptop... (Thử 'pin')"
-          className="w-full py-2 px-3 text-sm bg-transparent border-0 outline-none text-foreground placeholder:text-muted/70 focus:ring-0"
+          placeholder="Tìm dịch vụ bảo dưỡng xe máy, ô tô... (Thử 'thay nhớt')"
+          className="w-full py-2 px-3 text-sm bg-transparent border-0 outline-none text-foreground placeholder:text-muted focus:ring-0"
         />
         {query && (
           <button
@@ -121,7 +121,7 @@ export default function AiSearchBar() {
               setResults([]);
               inputRef.current?.focus();
             }}
-            className="p-1 mr-2 text-muted hover:text-foreground rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+            className="p-1 mr-2 text-muted hover:text-foreground rounded-full hover:bg-muted-light transition"
           >
             <X className="w-4 h-4" />
           </button>
@@ -167,7 +167,7 @@ export default function AiSearchBar() {
                         }`}
                       >
                         <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded text-primary shrink-0 mt-0.5">
-                          {service.category === 'laptop' ? <Laptop className="w-4 h-4" /> : <Smartphone className="w-4 h-4" />}
+                          <Wrench className="w-4 h-4" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-baseline justify-between gap-2">

@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "../components/theme-provider";
+import { AuthProvider } from "../store/auth-context";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -29,9 +31,14 @@ export default function RootLayout({
       lang="vi"
       className={`${inter.variable} h-full antialiased font-sans scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col bg-slate-50 text-gray-900">
-        {children}
+      <body className="min-h-full flex flex-col bg-slate-50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 transition-colors duration-200">
+        <ThemeProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+

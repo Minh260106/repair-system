@@ -23,7 +23,7 @@ export default function Footer() {
             </span>
           </Link>
           <p className="text-slate-400 leading-relaxed">
-            Hệ thống sửa chữa thiết bị công nghệ hàng đầu tại Việt Nam. Chúng tôi cam kết mang lại trải nghiệm sửa chữa trung thực, lấy ngay, bảo hành chu đáo nhất.
+            Hệ thống bảo dưỡng & sửa chữa xe máy, ô tô hàng đầu tại Việt Nam. Chúng tôi cam kết mang lại dịch vụ kỹ thuật cao, minh bạch, lấy ngay, bảo hành chu đáo nhất.
           </p>
           <div className="flex items-center gap-3 mt-2">
             <a href="#" className="w-8 h-8 rounded-full bg-slate-800 hover:bg-primary hover:text-white flex items-center justify-center text-slate-400 transition" aria-label="Facebook">
@@ -50,27 +50,27 @@ export default function Footer() {
         {/* Quick Sitemap Links */}
         <div>
           <h3 className="text-white text-sm font-bold uppercase tracking-wider mb-4 border-l-2 border-primary pl-2.5">
-            Dịch Vụ Nổi Bật
+            Dịch Vụ & Trang Tin
           </h3>
           <ul className="space-y-2.5">
             <li>
-              <Link href="/price-list?category=phone" className="hover:text-primary transition flex items-center gap-1.5">
-                Sửa Chữa iPhone & Android
+              <Link href="/branches" className="hover:text-primary transition flex items-center gap-1.5 font-semibold text-slate-200">
+                Hệ Thống Chi Nhánh Garage
               </Link>
             </li>
             <li>
-              <Link href="/price-list?category=laptop" className="hover:text-primary transition flex items-center gap-1.5">
-                Sửa Chữa MacBook & Laptop
+              <Link href="/faq" className="hover:text-primary transition flex items-center gap-1.5 font-semibold text-slate-200">
+                Hỏi Đáp Thường Gặp (FAQ)
               </Link>
             </li>
             <li>
-              <Link href="/price-list?category=tablet" className="hover:text-primary transition flex items-center gap-1.5">
-                Sửa Chữa iPad & Máy Tính Bảng
+              <Link href="/portal" className="hover:text-primary transition flex items-center gap-1.5 text-blue-400 font-semibold">
+                Cổng Khách Hàng (Customer Portal)
               </Link>
             </li>
             <li>
-              <Link href="/price-list?category=watch" className="hover:text-primary transition flex items-center gap-1.5">
-                Sửa Chữa Apple Watch & Smartwatch
+              <Link href="/tracking" className="hover:text-primary transition flex items-center gap-1.5">
+                Tra Cứu Tiến Độ Sửa Chữa
               </Link>
             </li>
             <li>
@@ -80,6 +80,7 @@ export default function Footer() {
             </li>
           </ul>
         </div>
+
 
         {/* Branch listing column */}
         <div className="lg:col-span-2">

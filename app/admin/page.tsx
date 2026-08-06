@@ -192,12 +192,11 @@ export default function AdminDashboardPage() {
               {mockMechanics.map((mech) => (
                 <div key={mech.id} className="flex items-center justify-between p-2.5 rounded-xl border border-gray-100 bg-slate-50">
                   <div className="flex items-center gap-3">
-                    <img
-                      src={mech.avatar}
-                      alt={mech.name}
-                      className="w-9 h-9 rounded-full object-cover border border-gray-200"
-                    />
+                    <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
+                      <Wrench className="w-4 h-4" />
+                    </div>
                     <div>
+
                       <p className="text-xs font-bold text-gray-900">{mech.name}</p>
                       <p className="text-[10px] text-gray-500">{mech.skillLevel}</p>
                     </div>

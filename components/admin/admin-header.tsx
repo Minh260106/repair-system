@@ -1,14 +1,28 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Bell, Sparkles, MapPin, ChevronDown, ShieldCheck } from 'lucide-react';
+import { Search, User } from 'lucide-react';
+
 import { Input } from '../ui/input';
+import { NotificationBell } from '../shared/notification-bell';
+import { ThemeToggle } from '../shared/theme-toggle';
+import { useAuth } from '../../store/auth-context';
 
 export const AdminHeader: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const { currentUser } = useAuth();
+
+  const getRoleBadge = (role?: string) => {
+    switch (role) {
+      case 'admin': return 'Admin Garage';
+      case 'manager': return 'Quản Lý Garage';
+      case 'technician': return 'Kỹ Thuật Viên';
+      default: return 'Nhân Viên';
+    }
+  };
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between sticky top-0 z-30">
+    <header className="h-16 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-6 flex items-center justify-between sticky top-0 z-30 transition-colors">
       {/* Global Search Bar */}
       <div className="w-80">
         <Input
@@ -16,34 +30,37 @@ export const AdminHeader: React.FC = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           leftIcon={<Search className="w-4 h-4 text-gray-400" />}
-          className="bg-slate-50 border-gray-200 py-1.5 text-xs"
+          className="bg-slate-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700 py-1.5 text-xs"
         />
       </div>
 
       {/* Right controls */}
       <div className="flex items-center gap-4">
         {/* Branch Live Status Indicator */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-200 rounded-full text-xs font-semibold text-green-700">
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-full text-xs font-semibold text-green-700 dark:text-green-400">
           <span className="w-2 h-2 rounded-full bg-green-600 animate-ping" />
           <span>Garage CN1: Đang hoạt động (4/5 thợ)</span>
         </div>
 
-        {/* Notifications */}
-        <button className="relative p-2 text-gray-500 hover:text-gray-900 hover:bg-slate-100 rounded-xl transition cursor-pointer">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
-        </button>
+        {/* Theme Toggle */}
+        <ThemeToggle />
+
+        {/* Notifications Bell */}
+        <NotificationBell />
 
         {/* Admin Profile */}
-        <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
-          <img
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
-            alt="Manager Avatar"
-            className="w-9 h-9 rounded-full object-cover border border-gray-200 shadow-sm"
-          />
+        <div className="flex items-center gap-2.5 pl-3 border-l border-gray-200 dark:border-slate-800">
+          <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs">
+            <User className="w-4 h-4" />
+          </div>
           <div className="hidden md:flex flex-col">
-            <span className="text-xs font-bold text-gray-900 leading-tight">Trần Văn Quản Lý</span>
-            <span className="text-[10px] text-gray-500 font-medium">Quản lý Garage Chi Nhánh 1</span>
+
+            <span className="text-xs font-bold text-gray-900 dark:text-white leading-tight">
+              {currentUser?.name || 'Đỗ Hoàng Admin'}
+            </span>
+            <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+              {getRoleBadge(currentUser?.role)}
+            </span>
           </div>
         </div>
       </div>

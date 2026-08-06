@@ -9,6 +9,7 @@ import { Textarea } from '../ui/textarea';
 
 export const QuickBookingSection: React.FC = () => {
   const [vehicleType, setVehicleType] = useState('');
+  const [customVehicle, setCustomVehicle] = useState('');
   const [symptom, setSymptom] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [phone, setPhone] = useState('');
@@ -23,7 +24,7 @@ export const QuickBookingSection: React.FC = () => {
     { value: 'vespa', label: 'Vespa / Piaggio Liberty / Medley' },
     { value: 'yamaha_exciter', label: 'Yamaha Exciter / NVX / Grande' },
     { value: 'moto_PKL', label: 'Xe Mô tô Phân Khối Lớn (PKL)' },
-    { value: 'other', label: 'Dòng xe khác...' },
+    { value: 'other', label: 'Dòng xe / hãng xe khác...' },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,6 +32,7 @@ export const QuickBookingSection: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!vehicleType) newErrors.vehicleType = 'Vui lòng chọn loại xe';
+    if (vehicleType === 'other' && !customVehicle.trim()) newErrors.customVehicle = 'Vui lòng nhập tên hãng xe / dòng xe';
     if (!symptom.trim()) newErrors.symptom = 'Vui lòng nhập triệu chứng hoặc vấn đề xe đang gặp';
     if (!dateTime) newErrors.dateTime = 'Vui lòng chọn ngày giờ dự định đến';
     if (!phone.trim() || phone.length < 9) newErrors.phone = 'Số điện thoại không hợp lệ';
@@ -87,6 +89,7 @@ export const QuickBookingSection: React.FC = () => {
                   setIsSubmitted(false);
                   setSymptom('');
                   setPhone('');
+                  setCustomVehicle('');
                 }}
               >
                 Đặt thêm lịch hẹn khác
@@ -94,16 +97,29 @@ export const QuickBookingSection: React.FC = () => {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 {/* 1. Loại xe (Select) */}
-                <Select
-                  label="Loại xe của bạn *"
-                  placeholder="-- Chọn dòng xe cần sửa chữa --"
-                  options={vehicleOptions}
-                  value={vehicleType}
-                  onChange={(e) => setVehicleType(e.target.value)}
-                  error={errors.vehicleType}
-                />
+                <div className="space-y-2">
+                  <Select
+                    label="Loại xe của bạn *"
+                    placeholder="-- Chọn dòng xe cần sửa chữa --"
+                    options={vehicleOptions}
+                    value={vehicleType}
+                    onChange={(e) => setVehicleType(e.target.value)}
+                    error={errors.vehicleType}
+                  />
+                  {vehicleType === 'other' && (
+                    <div className="animate-fade-in">
+                      <Input
+                        label="Tên hãng xe / dòng xe khác của bạn *"
+                        placeholder="Ví dụ: Ducati, KTM, Royal Enfield, Suzuki Raider..."
+                        value={customVehicle}
+                        onChange={(e) => setCustomVehicle(e.target.value)}
+                        error={errors.customVehicle}
+                      />
+                    </div>
+                  )}
+                </div>
 
                 {/* 2. Số điện thoại (Input) */}
                 <Input

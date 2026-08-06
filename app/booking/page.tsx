@@ -2,35 +2,108 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { 
-  Smartphone, Laptop, Tablet, Watch, ChevronRight, ChevronLeft, 
+  Bike, Car, Wrench, Zap, ChevronRight, ChevronLeft, 
   MapPin, Calendar, Clock, User, Phone, CheckCircle2, Copy, Share2, Sparkles, ShieldCheck 
 } from 'lucide-react';
 import ApiClient from '../../lib/api/client';
 import { Branch } from '../../types';
+import { Input } from '../../components/ui/input';
+import { Select } from '../../components/ui/select';
+import { Textarea } from '../../components/ui/textarea';
+
+
+export function formatPhoneNumber(val: string): string {
+  const digits = val.replace(/\D/g, '').slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)} ${digits.slice(3)}`;
+  return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
+}
 
 // Zod Validation Schema
 const bookingSchema = z.object({
-  deviceType: z.enum(['phone', 'tablet', 'laptop', 'watch', 'other']),
-  brand: z.string().min(1, 'Hãng sản xuất không được để trống'),
-  deviceModel: z.string().min(1, 'Vui lòng nhập model máy cụ thể'),
+  deviceType: z.enum(['bike', 'manual_bike', 'moto_pkl', 'car', 'electric_bike', 'other']),
+  brand: z.string().min(1, 'Hãng xe không được để trống'),
+  deviceModel: z.string().min(1, 'Vui lòng nhập dòng xe cụ thể'),
   symptoms: z.string().min(5, 'Mô tả triệu chứng tối thiểu 5 ký tự'),
   branchId: z.string().min(1, 'Vui lòng chọn chi nhánh gần bạn nhất'),
   appointmentDate: z.string().min(1, 'Vui lòng chọn ngày hẹn'),
   appointmentTime: z.string().min(1, 'Vui lòng chọn khung giờ hẹn'),
   customerName: z.string().min(2, 'Họ tên phải từ 2 ký tự trở lên'),
-  phoneNumber: z.string().regex(/^(0[3|5|7|8|9])+([0-9]{8})$/, 'Số điện thoại không hợp lệ (độ dài 10 số bắt đầu bằng 0)'),
+  phoneNumber: z
+    .string()
+    .transform((val) => val.replace(/\s+/g, ''))
+    .refine(
+      (val) => /^(0[3|5|7|8|9])+([0-9]{8})$/.test(val),
+      'Số điện thoại không hợp lệ (độ dài 10 số bắt đầu bằng 0)'
+    ),
 });
 
 type BookingFormData = z.infer<typeof bookingSchema>;
 
+const POPULAR_BRANDS: Record<string, { value: string; label: string }[]> = {
+  bike: [
+    { value: 'Honda', label: 'Honda (SH, Vision, Lead, Air Blade)' },
+    { value: 'Yamaha', label: 'Yamaha (Grande, NVX, Janus)' },
+    { value: 'Piaggio', label: 'Piaggio / Vespa (Sprint, Primavera, Liberty)' },
+    { value: 'SYM', label: 'SYM (Attila, Shark)' },
+    { value: 'Khác', label: 'Hãng xe khác...' },
+  ],
+  manual_bike: [
+    { value: 'Honda', label: 'Honda (Winner X, Wave Alpha, Future)' },
+    { value: 'Yamaha', label: 'Yamaha (Exciter 155, Sirius, Jupiter)' },
+    { value: 'Suzuki', label: 'Suzuki (Raider, Satria)' },
+    { value: 'SYM', label: 'SYM (Star SR, Galaxy)' },
+    { value: 'Khác', label: 'Hãng xe khác...' },
+  ],
+  moto_pkl: [
+    { value: 'BMW', label: 'BMW Motorrad' },
+    { value: 'Ducati', label: 'Ducati' },
+    { value: 'Kawasaki', label: 'Kawasaki' },
+    { value: 'Honda', label: 'Honda BigBike (CBR, CB500X)' },
+    { value: 'Yamaha', label: 'Yamaha R1/R6/MT-09' },
+    { value: 'KTM', label: 'KTM / Husqvarna' },
+    { value: 'Khác', label: 'Hãng xe khác...' },
+  ],
+  car: [
+    { value: 'Toyota', label: 'Toyota' },
+    { value: 'Honda', label: 'Honda (Cars)' },
+    { value: 'Hyundai', label: 'Hyundai' },
+    { value: 'Kia', label: 'Kia' },
+    { value: 'Ford', label: 'Ford' },
+    { value: 'VinFast', label: 'VinFast (VF8, VF9, VFe34)' },
+    { value: 'Mazda', label: 'Mazda' },
+    { value: 'Mercedes', label: 'Mercedes-Benz / BMW / Audi' },
+    { value: 'Khác', label: 'Hãng xe khác...' },
+  ],
+  electric_bike: [
+    { value: 'VinFast', label: 'VinFast (Feliz S, Klara S, Evo200)' },
+    { value: 'Yadea', label: 'Yadea' },
+    { value: 'Pega', label: 'Pega' },
+    { value: 'Dat Bike', label: 'Dat Bike Weaver' },
+    { value: 'Khác', label: 'Hãng xe điện khác...' },
+  ],
+  other: [
+    { value: 'Honda', label: 'Honda' },
+    { value: 'Yamaha', label: 'Yamaha' },
+    { value: 'Piaggio', label: 'Piaggio / Vespa' },
+    { value: 'VinFast', label: 'VinFast' },
+    { value: 'Toyota', label: 'Toyota' },
+    { value: 'Khác', label: 'Hãng xe khác...' },
+  ],
+};
+
 function BookingContent() {
   const searchParams = useSearchParams();
   const defaultDevice = searchParams.get('device') || '';
-  const defaultType = searchParams.get('type') || 'phone';
+  const defaultType = searchParams.get('type') || 'bike';
+
+  const initialBrand = defaultDevice.split(' ')[0] || 'Honda';
+  const [selectedBrandSelect, setSelectedBrandSelect] = useState<string>(initialBrand);
+  const [customBrand, setCustomBrand] = useState<string>('');
 
   const [step, setStep] = useState(1);
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -44,6 +117,7 @@ function BookingContent() {
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors, isValid },
     trigger
   } = useForm<BookingFormData>({
@@ -52,7 +126,7 @@ function BookingContent() {
     defaultValues: {
       deviceType: defaultType as any,
       deviceModel: defaultDevice,
-      brand: defaultDevice.split(' ')[0] || '',
+      brand: initialBrand,
       symptoms: '',
       branchId: '',
       appointmentDate: '',
@@ -77,11 +151,34 @@ function BookingContent() {
   // Sync parameters if loaded late
   useEffect(() => {
     if (defaultDevice) {
+      const brandVal = defaultDevice.split(' ')[0] || '';
       setValue('deviceModel', defaultDevice);
-      setValue('brand', defaultDevice.split(' ')[0] || '');
+      setValue('brand', brandVal);
       setValue('deviceType', defaultType as any);
+
+      const currentOptions = POPULAR_BRANDS[defaultType] || POPULAR_BRANDS.other;
+      const isKnown = currentOptions.some(opt => opt.value === brandVal && opt.value !== 'Khác');
+      if (isKnown) {
+        setSelectedBrandSelect(brandVal);
+      } else if (brandVal) {
+        setSelectedBrandSelect('Khác');
+        setCustomBrand(brandVal);
+      }
     }
   }, [defaultDevice, defaultType, setValue]);
+
+  // Sync brand select when deviceType changes
+  const handleDeviceTypeChange = (typeId: string) => {
+    setValue('deviceType', typeId as any, { shouldValidate: true });
+    const currentOptions = POPULAR_BRANDS[typeId] || POPULAR_BRANDS.other;
+    const firstVal = currentOptions[0].value;
+    setSelectedBrandSelect(firstVal);
+    if (firstVal !== 'Khác') {
+      setValue('brand', firstVal, { shouldValidate: true });
+    } else {
+      setValue('brand', customBrand, { shouldValidate: true });
+    }
+  };
 
   const handleNextStep = async () => {
     let fieldsToValidate: (keyof BookingFormData)[] = [];
@@ -113,9 +210,10 @@ function BookingContent() {
   const onSubmit = async (data: BookingFormData) => {
     setSubmitting(true);
     try {
+      const cleanPhone = data.phoneNumber.replace(/\s+/g, '');
       const order = await ApiClient.createBooking({
         customerName: data.customerName,
-        phoneNumber: data.phoneNumber,
+        phoneNumber: cleanPhone,
         deviceType: data.deviceType,
         brand: data.brand,
         deviceModel: data.deviceModel,
@@ -194,22 +292,24 @@ function BookingContent() {
       {step < 5 && (
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-3xl p-6 md:p-8 shadow-xl space-y-6">
           
-          {/* STEP 1: SELECT DEVICE TYPE & MODEL */}
+          {/* STEP 1: SELECT VEHICLE TYPE & MODEL */}
           {step === 1 && (
             <div className="space-y-6 animate-fade-in">
               <h2 className="text-base font-bold text-foreground border-b border-slate-100 dark:border-slate-800 pb-3">
-                Bước 1: Chọn Thiết Bị Của Bạn
+                Bước 1: Chọn Phương Tiện Của Bạn
               </h2>
 
               {/* Grid selectors */}
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-muted">Loại thiết bị</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-muted">Loại phương tiện</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {[
-                    { id: 'phone', label: 'Điện thoại', icon: Smartphone },
-                    { id: 'laptop', label: 'Laptop/Mac', icon: Laptop },
-                    { id: 'tablet', label: 'Máy tính bảng', icon: Tablet },
-                    { id: 'watch', label: 'Smartwatch', icon: Watch },
+                    { id: 'bike', label: 'Xe Tay Ga', icon: Bike },
+                    { id: 'manual_bike', label: 'Xe Số / Côn Tay', icon: Wrench },
+                    { id: 'moto_pkl', label: 'Mô Tô (PKL)', icon: Bike },
+                    { id: 'electric_bike', label: 'Xe Máy Điện', icon: Zap },
+                    { id: 'car', label: 'Ô Tô / Xe Hơi', icon: Car },
+                    { id: 'other', label: 'Xe Khác', icon: Wrench },
                   ].map((type) => {
                     const Icon = type.icon;
                     const isSelected = watchedValues.deviceType === type.id;
@@ -217,7 +317,7 @@ function BookingContent() {
                       <button
                         key={type.id}
                         type="button"
-                        onClick={() => setValue('deviceType', type.id as any, { shouldValidate: true })}
+                        onClick={() => handleDeviceTypeChange(type.id)}
                         className={`p-4 rounded-2xl border text-center flex flex-col items-center gap-2 cursor-pointer transition ${
                           isSelected 
                             ? 'border-primary bg-primary-light/30 dark:bg-primary-light/5 text-primary shadow-sm font-bold' 
@@ -230,32 +330,52 @@ function BookingContent() {
                     );
                   })}
                 </div>
-                {errors.deviceType && <p className="text-[10px] text-error font-semibold mt-1">{errors.deviceType.message}</p>}
+                <div className="min-h-[16px]">
+                  {errors.deviceType && <p className="text-[10px] text-error font-semibold mt-1">{errors.deviceType.message}</p>}
+                </div>
               </div>
 
               {/* Brand and exact model */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted">Hãng sản xuất</label>
-                  <input
-                    type="text"
-                    {...register('brand')}
-                    placeholder="Ví dụ: Apple, Samsung, Dell..."
-                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 rounded-xl text-xs outline-none focus:border-primary focus:bg-white dark:focus:bg-slate-900 transition text-foreground"
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                <div className="space-y-2">
+                  <Select
+                    label="Hãng xe / Thương hiệu"
+                    options={POPULAR_BRANDS[watchedValues.deviceType] || POPULAR_BRANDS.other}
+                    value={selectedBrandSelect}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSelectedBrandSelect(val);
+                      if (val !== 'Khác') {
+                        setValue('brand', val, { shouldValidate: true });
+                      } else {
+                        setValue('brand', customBrand, { shouldValidate: true });
+                      }
+                    }}
+                    error={errors.brand?.message}
                   />
-                  {errors.brand && <p className="text-[10px] text-error font-semibold mt-1">{errors.brand.message}</p>}
+
+                  {selectedBrandSelect === 'Khác' && (
+                    <div className="animate-fade-in">
+                      <Input
+                        label="Nhập tên hãng xe của bạn"
+                        placeholder="Ví dụ: Ducati, KTM, Royal Enfield, Triumph..."
+                        value={customBrand}
+                        onChange={(e) => {
+                          setCustomBrand(e.target.value);
+                          setValue('brand', e.target.value, { shouldValidate: true });
+                        }}
+                        error={errors.brand?.message}
+                      />
+                    </div>
+                  )}
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted">Model thiết bị cụ thể</label>
-                  <input
-                    type="text"
-                    {...register('deviceModel')}
-                    placeholder="Ví dụ: iPhone 13 Pro, Latitude 5420..."
-                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 rounded-xl text-xs outline-none focus:border-primary focus:bg-white dark:focus:bg-slate-900 transition text-foreground"
-                  />
-                  {errors.deviceModel && <p className="text-[10px] text-error font-semibold mt-1">{errors.deviceModel.message}</p>}
-                </div>
+                <Input
+                  label="Dòng xe / Model xe cụ thể"
+                  placeholder="Ví dụ: SH 150i ABS, Exciter 155, Vespa Sprint, VF8..."
+                  error={errors.deviceModel?.message}
+                  {...register('deviceModel')}
+                />
               </div>
             </div>
           )}
@@ -267,16 +387,13 @@ function BookingContent() {
                 Bước 2: Triệu Chứng Lỗi & Sự Cố
               </h2>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-muted">Mô tả chi tiết tình trạng máy</label>
-                <textarea
-                  rows={4}
-                  {...register('symptoms')}
-                  placeholder="Vui lòng nhập chi tiết sự cố (Ví dụ: Máy bị rơi nước, bật không lên nguồn; hoặc màn hình bị sọc xanh cảm ứng không bấm được)..."
-                  className="w-full px-4 py-3 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 rounded-2xl text-xs outline-none focus:border-primary focus:bg-white dark:focus:bg-slate-900 transition text-foreground resize-none leading-relaxed"
-                />
-                {errors.symptoms && <p className="text-[10px] text-error font-semibold mt-1">{errors.symptoms.message}</p>}
-              </div>
+              <Textarea
+                label="Mô tả chi tiết tình trạng máy"
+                rows={4}
+                placeholder="Vui lòng nhập chi tiết sự cố (Ví dụ: Máy bị rơi nước, bật không lên nguồn; hoặc màn hình bị sọc xanh cảm ứng không bấm được)..."
+                error={errors.symptoms?.message}
+                {...register('symptoms')}
+              />
 
               <div className="p-4 bg-primary-light/20 dark:bg-primary-light/5 border border-primary/20 rounded-2xl flex items-start gap-2.5">
                 <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -323,37 +440,28 @@ function BookingContent() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5 text-primary" /> Ngày hẹn sửa chữa
-                  </label>
-                  <input
-                    type="date"
-                    {...register('appointmentDate')}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 rounded-xl text-xs outline-none focus:border-primary focus:bg-white dark:focus:bg-slate-900 text-foreground transition"
-                  />
-                  {errors.appointmentDate && <p className="text-[10px] text-error font-semibold mt-1">{errors.appointmentDate.message}</p>}
-                </div>
+                <Input
+                  type="date"
+                  label="Ngày hẹn sửa chữa"
+                  min={new Date().toISOString().split('T')[0]}
+                  error={errors.appointmentDate?.message}
+                  {...register('appointmentDate')}
+                />
 
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-primary" /> Khung giờ hẹn
-                  </label>
-                  <select
-                    {...register('appointmentTime')}
-                    className="w-full px-3 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 rounded-xl text-xs outline-none focus:border-primary focus:bg-white dark:focus:bg-slate-900 text-foreground transition"
-                  >
-                    <option value="">Chọn khung giờ</option>
-                    <option value="08:00 - 10:00">08:00 - 10:00 (Đầu ca sáng)</option>
-                    <option value="10:00 - 12:00">10:00 - 12:00</option>
-                    <option value="12:00 - 14:00">12:00 - 14:00 (Hỗ trợ nghỉ trưa)</option>
-                    <option value="14:00 - 16:00">14:00 - 16:00</option>
-                    <option value="16:00 - 18:00">16:00 - 18:00 (Cuối chiều)</option>
-                    <option value="18:00 - 20:00">18:00 - 20:00 (Khung giờ tối)</option>
-                  </select>
-                  {errors.appointmentTime && <p className="text-[10px] text-error font-semibold mt-1">{errors.appointmentTime.message}</p>}
-                </div>
+                <Select
+                  label="Khung giờ hẹn"
+                  placeholder="Chọn khung giờ"
+                  options={[
+                    { value: '08:00 - 10:00', label: '08:00 - 10:00 (Đầu ca sáng)' },
+                    { value: '10:00 - 12:00', label: '10:00 - 12:00' },
+                    { value: '12:00 - 14:00', label: '12:00 - 14:00 (Hỗ trợ nghỉ trưa)' },
+                    { value: '14:00 - 16:00', label: '14:00 - 16:00' },
+                    { value: '16:00 - 18:00', label: '16:00 - 18:00 (Cuối chiều)' },
+                    { value: '18:00 - 20:00', label: '18:00 - 20:00 (Khung giờ tối)' },
+                  ]}
+                  error={errors.appointmentTime?.message}
+                  {...register('appointmentTime')}
+                />
               </div>
             </div>
           )}
@@ -366,31 +474,33 @@ function BookingContent() {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted flex items-center gap-1">
-                    <User className="w-3.5 h-3.5 text-primary" /> Họ và tên khách hàng
-                  </label>
-                  <input
-                    type="text"
-                    {...register('customerName')}
-                    placeholder="Nhập tên đầy đủ..."
-                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 rounded-xl text-xs outline-none focus:border-primary focus:bg-white dark:focus:bg-slate-900 text-foreground transition"
-                  />
-                  {errors.customerName && <p className="text-[10px] text-error font-semibold mt-1">{errors.customerName.message}</p>}
-                </div>
+                <Input
+                  label="Họ và tên khách hàng"
+                  placeholder="Nhập tên đầy đủ..."
+                  error={errors.customerName?.message}
+                  {...register('customerName')}
+                />
 
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted flex items-center gap-1">
-                    <Phone className="w-3.5 h-3.5 text-primary" /> Số điện thoại liên hệ
-                  </label>
-                  <input
-                    type="tel"
-                    {...register('phoneNumber')}
-                    placeholder="Số điện thoại di động..."
-                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 rounded-xl text-xs outline-none focus:border-primary focus:bg-white dark:focus:bg-slate-900 text-foreground transition"
-                  />
-                  {errors.phoneNumber && <p className="text-[10px] text-error font-semibold mt-1">{errors.phoneNumber.message}</p>}
-                </div>
+                <Controller
+                  name="phoneNumber"
+                  control={control}
+                  render={({ field: { onChange, value, ref } }) => (
+                    <Input
+                      ref={ref}
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={12}
+                      label="Số điện thoại liên hệ"
+                      placeholder="090 123 4567"
+                      value={value}
+                      onChange={(e) => {
+                        const formatted = formatPhoneNumber(e.target.value);
+                        onChange(formatted);
+                      }}
+                      error={errors.phoneNumber?.message}
+                    />
+                  )}
+                />
               </div>
 
               {/* Review summary box */}

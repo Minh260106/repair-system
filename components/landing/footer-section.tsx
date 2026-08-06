@@ -118,16 +118,13 @@ export const FooterSection: React.FC = () => {
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="space-y-2.5">
-                <div className="relative">
-                  <input
-                    type="email"
-                    required
-                    placeholder="Email của bạn..."
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 outline-none focus:border-blue-500 transition"
-                  />
-                </div>
+                <Input
+                  type="email"
+                  required
+                  placeholder="Email của bạn..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
                 <Button variant="secondary" size="sm" className="w-full" rightIcon={<Send className="w-3.5 h-3.5" />}>
                   Đăng ký ngay
                 </Button>

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* Colors - Light Theme (inspired by Fastcare and premium blue-accent design) */
   --background: #f8fafc; /* Slate 50 */
@@ -52,28 +54,6 @@
   --muted-light: #1e293b; /* Slate 800 */
 }
 
-/* System preferences dark theme */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b132b; /* Deep Dark Navy */
-    --foreground: #f1f5f9; /* Slate 100 */
-    
-    --primary: #38bdf8; /* Sky 400 */
-    --primary-hover: #0ea5e9; /* Sky 500 */
-    --primary-light: #0c4a6e; /* Sky 900 */
-    
-    --accent: #fb923c; /* Orange 400 */
-    --accent-hover: #f97316; /* Orange 500 */
-    --accent-light: #7c2d12; /* Orange 900 */
-    
-    --card: #1c2541; /* Medium Slate Navy */
-    --card-foreground: #f1f5f9;
-    
-    --border: #334155; /* Slate 700 */
-    --muted: #94a3b8; /* Slate 400 */
-    --muted-light: #1e293b; /* Slate 800 */
-  }
-}
 
 @theme {
   --color-background: var(--background);

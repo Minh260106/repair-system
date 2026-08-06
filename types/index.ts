@@ -10,7 +10,7 @@ export interface Branch {
 export interface ServiceItem {
   id: string;
   name: string;
-  category: 'maintenance' | 'repair' | 'engine' | 'electrical' | 'brakes' | 'phone' | 'tablet' | 'laptop' | 'watch' | 'other';
+  category: 'maintenance' | 'repair' | 'engine' | 'electrical' | 'brakes' | 'other';
   brand?: string;
   deviceModel?: string;
   price: number;
@@ -59,12 +59,13 @@ export interface Mechanic {
   id: string;
   name: string;
   phone: string;
-  avatar: string;
-  skillLevel: 'Thợ Chính' | 'Thợ Phụ' | 'Trưởng Nhóm' | 'Chuyên Gia AI';
+  avatar?: string;
+  skillLevel: 'Thợ Chính' | 'Thợ Phụ' | 'Trưởng Nhóm' | 'Chuyên Gia AI' | string;
   status: 'rảnh' | 'đang làm' | 'nghỉ phép';
   currentOrderId?: string;
   completedOrdersCount: number;
 }
+
 
 export interface OrderItem {
   id: string;
@@ -83,6 +84,7 @@ export interface OrderItem {
   timeline: TimelineEvent[];
   assignedMechanicId?: string;
   assignedMechanicName?: string;
+  assignmentStatus?: 'pending_acceptance' | 'accepted' | 'declined';
   services: { serviceId: string; serviceName: string; price: number }[];
   totalPrice: number;
   dateCreated: string;
@@ -119,10 +121,56 @@ export interface Invoice {
   createdAt: string;
 }
 
+export type UserRole = 'customer' | 'technician' | 'manager' | 'admin';
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatar?: string;
+  phone?: string;
+  address?: string;
+}
+
+export interface Review {
+  id: string;
+  orderId: string;
+  customerId: string;
+  customerName?: string;
+  rating: number;
+  comment: string;
+  isPublic: boolean;
+  createdAt: string;
+}
+
+export interface PartItem {
+  id: string;
+  name: string;
+  sku: string;
+  quantity: number;
+  minQuantity: number;
+  unitPrice: number;
+  supplier: string;
+  lastRestockDate: string;
+}
+
+export interface NotificationItem {
+  id: string;
+  userId: string;
+  title: string;
+  message: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  isRead: boolean;
+  createdAt: string;
+  link?: string;
+}
+
 export interface ChatMessage {
   id: string;
-  sender: 'user' | 'ai';
+  sender: 'user' | 'ai' | 'mechanic';
   text: string;
   timestamp: Date;
   isDisclaimer?: boolean;
 }
+

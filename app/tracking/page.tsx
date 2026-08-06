@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import ApiClient from '../../lib/api/client';
 import { OrderItem } from '../../types';
+import { Input } from '../../components/ui/input';
 
 function TrackingContent() {
   const router = useRouter();
@@ -107,21 +108,20 @@ function TrackingContent() {
 
       {/* 2. Search Input bar */}
       <div className="max-w-xl mx-auto mb-10 no-print">
-        <form onSubmit={handleFormSubmit} className="flex gap-2">
-          <div className="relative flex-1">
-            <input
+        <form onSubmit={handleFormSubmit} className="flex items-start gap-2">
+          <div className="flex-1">
+            <Input
               type="text"
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
               placeholder="Nhập mã đơn hàng FIX-xxxxx hoặc số điện thoại..."
-              className="w-full pl-10 pr-4 py-3 border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900 rounded-2xl text-xs text-foreground placeholder:text-muted/70 outline-none focus:border-primary shadow-sm"
+              leftIcon={<Search className="w-4 h-4" />}
             />
-            <Search className="w-5 h-5 text-muted absolute left-3 top-3.5" />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-3 bg-primary hover:bg-primary-hover disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-muted text-white text-xs font-bold rounded-2xl transition cursor-pointer shadow-md shadow-primary/10 active:scale-95 shrink-0"
+            className="px-6 py-2.5 bg-primary hover:bg-primary-hover disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-muted text-white text-xs font-bold rounded-xl transition cursor-pointer shadow-md shadow-primary/10 active:scale-95 shrink-0"
           >
             {loading ? 'Đang tra...' : 'Tra cứu'}
           </button>

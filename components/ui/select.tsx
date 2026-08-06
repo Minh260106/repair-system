@@ -12,27 +12,28 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
   error?: string;
   options: SelectOption[];
   placeholder?: string;
+  helperText?: string;
 }
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, options, placeholder, className = '', id, ...props }, ref) => {
+  ({ label, error, helperText, options, placeholder, className = '', id, ...props }, ref) => {
     const selectId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
 
     const borderState = error
-      ? 'border-red-500 text-red-900 focus:ring-2 focus:ring-red-500 focus:border-red-500'
-      : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500';
+      ? 'border-error text-foreground focus:ring-2 focus:ring-error focus:border-error'
+      : 'border-border focus:ring-2 focus:ring-primary focus:border-primary';
 
     return (
       <div className="w-full flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={selectId} className="text-sm font-medium text-gray-900">
+          <label htmlFor={selectId} className="text-sm font-medium text-foreground">
             {label}
           </label>
         )}
         <select
           ref={ref}
           id={selectId}
-          className={`w-full rounded-xl bg-white border px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-all duration-200 cursor-pointer ${borderState} ${className}`}
+          className={`w-full rounded-xl bg-background border px-3.5 py-2.5 text-sm text-foreground outline-none transition-all duration-200 cursor-pointer ${borderState} ${className}`}
           {...props}
         >
           {placeholder && <option value="">{placeholder}</option>}
@@ -42,10 +43,14 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
-        {error && <p className="text-xs font-medium text-red-600">{error}</p>}
+        <div className="min-h-[16px]">
+          {error && <p className="text-xs font-medium text-error animate-fade-in">{error}</p>}
+          {!error && helperText && <p className="text-xs text-muted">{helperText}</p>}
+        </div>
       </div>
     );
   }
 );
 
 Select.displayName = 'Select';
+

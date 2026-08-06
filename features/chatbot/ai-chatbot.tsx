@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, X, Send, Sparkles, Phone, ShieldCheck, Clock, Calendar } from 'lucide-react';
 import { ChatMessage } from '../../types';
+import { Input } from '../../components/ui/input';
 
 const INITIAL_MESSAGES: ChatMessage[] = [
   {
@@ -190,19 +191,20 @@ export default function AiChatbot() {
               e.preventDefault();
               handleSendMessage(inputValue);
             }}
-            className="p-3 bg-white border-t border-gray-200 flex items-center gap-2"
+            className="p-3 bg-card border-t border-border flex items-center gap-2"
           >
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Hỏi AI bất kỳ triệu chứng hay dịch vụ nào..."
-              className="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-gray-50"
-            />
+            <div className="flex-1">
+              <Input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Hỏi AI bất kỳ triệu chứng hay dịch vụ nào..."
+              />
+            </div>
             <button
               type="submit"
               disabled={!inputValue.trim()}
-              className="p-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl transition cursor-pointer"
+              className="p-2.5 bg-primary hover:bg-primary-hover disabled:opacity-50 text-white rounded-xl transition cursor-pointer shrink-0"
             >
               <Send className="w-4 h-4" />
             </button>
