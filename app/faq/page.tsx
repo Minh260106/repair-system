@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { HelpCircle, ChevronDown, ChevronUp, Sparkles, Wrench, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Navbar } from '@/components/landing/navbar';
-import Footer from '@/components/layout/footer';
+import { FooterSection } from '@/components/landing/footer-section';
 import { Button } from '@/components/ui/button';
 
 interface FAQItem {
@@ -120,7 +120,7 @@ export default function FAQPage() {
 
       </main>
 
-      <Footer />
+      <FooterSection />
     </div>
   );
 }

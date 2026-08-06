@@ -3,6 +3,7 @@ export interface Branch {
   name: string;
   address: string;
   hotline?: string;
+  phone?: string;
   mapUrl?: string;
   workingHours: string;
 }
